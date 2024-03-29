@@ -10,13 +10,15 @@ COPY package*.json ./
 
 
 # Install dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy the rest of your app's source code
 COPY . .
 
 # Compile TypeScript to JavaScript
 RUN npm run build
+
+
 
 # Stage 2: Runtime
 # Use a clean Node.js image for the runtime environment
@@ -37,7 +39,7 @@ COPY --from=builder /app/swagger.yaml ./
 
 
 # Install only production dependencies
-RUN npm install --production
+RUN npm install
 
 # Expose the port the app runs on
 EXPOSE 3000
