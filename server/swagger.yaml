@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: URL Shortener API
+  version: 1.0.0
+  description: API for creating, redirecting, modifying, and deleting shortened URLs.
+servers:
+  - url: http://localhost:3001/api/v1
+paths:
+  /create:
+    post:
+      summary: Create a shortened URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: The URL to shorten.
+      responses:
+        '201':
+          description: Successfully created shortened URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortUrlResponse'
+        '429':
+          description: Too many requests
+  /shorts:
+    get:
+      summary: Get all of the shortened urls
+      responses:
+        '201':
+          description: Successfully created shortened URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortUrlResponse'
+        '429':
+          description: Too many requests
+  /{shortcode}:
+    get:
+      summary: Redirect to the original URL using a shortcode
+      parameters:
+        - in: path
+          name: shortcode
+          required: true
+          schema:
+            type: string
+          description: The shortcode of the shortened URL.
+      responses:
+        '302':
+          description: Redirect to the original URL
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: The original URL to redirect to.
+        '404':
+          description: Shortcode not found
+    patch:
+      summary: Modify an existing shortened URL
+      parameters:
+        - in: path
+          name: shortcode
+          required: true
+          schema:
+            type: string
+          description: The shortcode of the shortened URL to modify.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: The new URL to associate with the shortcode.
+      responses:
+        '200':
+          description: Successfully updated the URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortUrlResponse'
+        '404':
+          description: Shortcode not found
+    delete:
+      summary: Delete a shortened URL
+      parameters:
+        - in: path
+          name: shortcode
+          required: true
+          schema:
+            type: string
+          description: The shortcode of the shortened URL to delete.
+      responses:
+        '204':
+          description: Successfully deleted the shortened URL
+        '404':
+          description: Shortcode not found
+components:
+  schemas:
+    ShortUrlResponse:
+      type: object
+      properties:
+        shortcode:
+          type: string
+          description: The generated shortcode for the shortened URL.
+        url:
+          type: string
+          format: uri
+          description: The original URL.
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the shortcode was created.
