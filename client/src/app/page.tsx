@@ -1,5 +1,5 @@
-import NewShort from "@/components/modules/new-short";
-import ShortList from "@/components/modules/short-list";
+import NewShort from "@/components/modules/NewShort";
+import ShortList from "@/components/modules/ShortList";
 import Image from "next/image";
 
 
