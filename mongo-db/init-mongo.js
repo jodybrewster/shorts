@@ -19,7 +19,7 @@ db.createCollection("Urls", {
         },
         amountVisited: {
           bsonType: "number",
-          description: "Amount of times the url was visited",
+          description: "Amount of times the url was visit}ed",
         },
       },
     },
