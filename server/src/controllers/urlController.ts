@@ -16,10 +16,8 @@ const general500Response = {
 // Function to create a shortened URL
 export const createShortUrl = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const { url } = req.body;
     const shortcode = nanoid(7); // Generate a 7-character shortcode
-
     const newUrl = await UrlModel.create({ url, shortcode });
     res.status(201).json(newUrl);
   } catch (error) {
@@ -34,6 +32,8 @@ export const redirectToUrl = async (req: Request, res: Response) => {
     const { shortcode } = req.params;
     const urlEntry = await UrlModel.findOne({ shortcode });
     if (urlEntry) {
+      urlEntry.amountVisited = urlEntry.amountVisited + 1;
+      urlEntry.save();
       return res.redirect(urlEntry.url);
     }
     return res
@@ -50,18 +50,21 @@ export const redirectToUrl = async (req: Request, res: Response) => {
 // Function to update an existing shortened URL
 export const updateUrl = async (req: Request, res: Response) => {
   try {
-    const { shortcode } = req.params;
-    const { url } = req.body;
+    const { shortcode: s } = req.params;
+    const { url, shortcode } = req.body;
+    console.log(s, req.body)
     const updatedUrl = await UrlModel.findOneAndUpdate(
-      { shortcode },
-      { url },
+      { shortcode: s },
+      { shortcode, url },
       { new: true }
     );
     if (updatedUrl) {
+      console.log('updatedUrl', updatedUrl);
       return res.json(updatedUrl);
     }
-    return res.status(404).send(fourOhFourText)
+    return res.status(404).send(fourOhFourText);
   } catch (error) {
+    console.error(error);
     res.status(500).json(general500Response);
   }
 };
@@ -70,7 +73,6 @@ export const updateUrl = async (req: Request, res: Response) => {
 export const getShorts = async (req: Request, res: Response) => {
   try {
     const foundShorts = await UrlModel.find();
-    console.log("foundShorts", foundShorts);
     if (foundShorts) {
       return res.json({ data: foundShorts });
     }
@@ -85,7 +87,6 @@ export const getShorts = async (req: Request, res: Response) => {
 export const deleteUrl = async (req: Request, res: Response) => {
   try {
     const { shortcode } = req.params;
-    console.log(shortcode);
     const deleted = await UrlModel.findOneAndDelete({ shortcode });
     if (deleted) {
       return res.status(204).send();

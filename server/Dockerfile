@@ -10,13 +10,13 @@ COPY package*.json ./
 
 
 # Install dependencies
-RUN npm install
+RUN yarn
 
 # Copy the rest of your app's source code
 COPY . .
 
 # Compile TypeScript to JavaScript
-RUN npm run build
+RUN yarn build
 
 
 
@@ -39,7 +39,7 @@ COPY --from=builder /app/swagger.yaml ./
 
 
 # Install only production dependencies
-RUN npm install
+RUN yarn
 
 # Expose the port the app runs on
 EXPOSE 3000

@@ -7,15 +7,15 @@ EXPOSE 3000
 FROM base as builder
 WORKDIR /app
 COPY . .
-RUN npm install
-RUN npm run build
+RUN yarn
+RUN yarn build
 
 
 FROM base as production
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN npm ci
+RUN yarn install --frozen-lockfile
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
@@ -27,10 +27,10 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
 
-CMD npm start
+CMD yarn start
 
 FROM base as dev
 ENV NODE_ENV=development
-RUN npm install 
+RUN yarn
 COPY . .
-CMD npm run dev
+CMD yarn dev

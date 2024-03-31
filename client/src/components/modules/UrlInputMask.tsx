@@ -1,10 +1,14 @@
-import React, { useState, forwardRef, ChangeEvent } from "react";
+import React, { useState, forwardRef, ChangeEvent, RefObject } from "react";
 import { Input } from "@/components/ui/input";
 
 // eslint-disable-next-line react/display-name
-const URLInputMask = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>((props, ref) => {
+const URLInputMask = forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>((props, ref) => {
   const [url, setUrl] = useState<string>("");
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   // A simple regex for URL validation; you might need a more complex one depending on your requirements
   const urlPattern = new RegExp(
@@ -19,23 +23,45 @@ const URLInputMask = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTML
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
+    if (value && value.length > 0) {
+      const valid = urlPattern.test(value);
+      setIsValid(valid);
+      setErrorMessage(valid ? "" : "Please use a valid URL");
+    } else {
+      setIsValid(true);
+      setErrorMessage("");
+    }
     setUrl(value);
-    setIsValid(urlPattern.test(value));
   };
 
   return (
-    <Input
-      type="text"
-      ref={ref}
-      value={url}
-      onChange={handleChange}
-      style={{
-        borderColor: isValid ? "green" : "red",
-        borderWidth: "2px",
-      }}
-      {...props}
-    />
+    <>
+      <Input
+        type="text"
+        ref={ref}
+        value={url}
+        onChange={handleChange}
+        style={{
+          borderColor: getBorderColor(isValid, url.length),
+          borderWidth: "2px",
+        }}
+        {...props}
+      />
+      {errorMessage && (
+        <div id="errorMessageUrl" className="text-red-500">
+          {errorMessage}
+        </div>
+      )}
+    </>
   );
 });
+
+const getBorderColor = (isValid: boolean, urlLength: number): string => {
+  if (urlLength > 1) {
+    return isValid ? "green" : "red";
+  } else {
+    return "#ccc";
+  }
+};
 
 export default URLInputMask;

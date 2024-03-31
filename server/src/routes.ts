@@ -43,6 +43,7 @@ export const registerRoutes = (app: Express) => {
     "/api/v1/shorts/:shortcode",
     rateLimiterMiddleware,
     (req: Request, res: Response) => {
+      console.log('updateUrl')
       updateUrl(req, res);
     }
   );
@@ -52,7 +53,6 @@ export const registerRoutes = (app: Express) => {
     "/api/v1/shorts/:shortcode",
     rateLimiterMiddleware,
     (req: Request, res: Response) => {
-      console.log('deleteUrl')
       deleteUrl(req, res);
     }
   );

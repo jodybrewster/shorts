@@ -17,6 +17,10 @@ db.createCollection("Urls", {
           bsonType: "string",
           description: "must be a string and is required",
         },
+        amountVisited: {
+          bsonType: "number",
+          description: "Amount of times the url was visited",
+        },
       },
     },
   },

@@ -1,3 +1,4 @@
 export const settings = {
-  API_URL: "http://localhost:3000"
+  HOST_URL: "https://localhost:3000",
+  API_URL: "http://localhost:3000/api/v1"
 };
